@@ -8,9 +8,11 @@ def validUTF8(data):
 
     # Iterate through each integer in the data
     for num in data:
-        # If the number of bytes is 0, it means we are starting a new character
+        # If the number of bytes is 0, it means
+        # we are starting a new character
         if num_bytes == 0:
-            # Count the number of leading 1s to determine the number of bytes in the character
+            # Count the number of leading 1s to determine
+            # the number of bytes in the character
             mask = 1 << 7
             while mask & num:
                 num_bytes += 1
@@ -20,12 +22,14 @@ def validUTF8(data):
             if num_bytes == 1 or num_bytes > 4:
                 return False
 
-            # If the number of bytes is 0, it means it's a single-byte character
+            # If the number of bytes is 0, it means
+            # it's a single-byte character
             if num_bytes == 0:
                 continue
 
         else:
-            # If the number of bytes is not 0, it means we are in the middle of a character
+            # If the number of bytes is not 0,
+            # it means we are in the middle of a character
             # Check if the current byte is a valid continuation byte
             if num >> 6 != 0b10:
                 return False
