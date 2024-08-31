@@ -1,66 +1,105 @@
 #!/usr/bin/python3
-import sys
+'''
+Python3 program to solve N Queen Problem using
+backtracking
+'''
 
 
-def is_safe(board, row, col):
-    """
-    Checks if a queen can be placed safely at the given position.
-    """
-    # Check for queens in the same row
+result = []
+
+# A utility function to print solution
+
+"""
+A function to check if a queen can be placed on
+board[row][col].
+"""
+
+
+def isSAfe(board, row, col):
+    # Check this row on left side
     for i in range(col):
-        if board[row][i] == 1:
+        if board[row][i]:
             return False
 
-    # Check for queens in diagonals (upward and downward)
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
+    # Check upper diagonal on the left side
+    i = row
+    j = col
+    while i >= 0 and j >= 0:
+        if board[i][j]:
             return False
-    for i, j in zip(range(row + 1, len(board)), range(col - 1, -1, -1)):
-        if board[i][j] == 1:
-            return False
+        i -= 1
+        j -= 1
 
+    # Check lower diagonal on the left side
+    i = row
+    j = col
+    while j >= 0 and i < 4:
+        if board[i][j]:
+            return False
+        i = i + 1
+        j = j - 1
     return True
 
 
-def solve_n_queens(board, col):
-    """
-    Solves the N queens problem recursively using backtracking.
-    """
-    if col >= len(board):
-        # Print the solution when all queens are placed
-        solution = [[i, j] for i in range(len(board))
-                    for j in range(len(board)) if board[i][j] == 1]
-        print(solution)
-        return
+"""
+A recursive utility function to solve N Queen problem
+"""
 
-    for i in range(len(board)):
-        if is_safe(board, i, col):
+
+def solveNQUtil(board, col):
+    """
+    base case: If all queen are placed
+    then return true
+    """
+    if col == 4:
+        v = []
+        for i in board:
+            for j in range(len(i)):
+                if i[j] == 1:
+                    v.append(j + 1)
+        result.append(v)
+        return True
+
+    """
+    Consider this column and try placing
+    this queen in all rows one by one
+    """
+    res = False
+    for i in range(4):
+        """
+        Check if queen can be placed
+        on board[i][col]
+        """
+        if isSAfe(board, i, col):
+            """
+            Place this queen in board[i][col]
+            """
             board[i][col] = 1
-            solve_n_queens(board, col + 1)
-            board[i][col] = 0  # Backtrack
 
+            # make result true if any placement
+            # is possible
+            res = solveNQUtil(board, col + 1) or res
 
-def main():
+            """
+            If placing queen in board[i][col]
+            doesn't lead to a solution then
+            remove queen from board[i][col]
+            """
+            board[i][col] = 0  # BACKTRACK
+
     """
-    Main function for handling arguments and solving N queens problem.
+    If queen can not be placed in any row in
+    this column col then return False
     """
-    if len(sys.argv) != 2:
-        print("Usage: nqueens N")
-        sys.exit(1)
+    return res
 
-    try:
-        n = int(sys.argv[1])
-    except ValueError:
-        print("N must be a number")
-        sys.exit(1)
+def solveNQ(n):
+    result.clear()
+    board = [[0 for j in range(n)]
+             for i in range(n)]
+    solveNQUtil(board, 0)
+    return result
 
-    if n < 4:
-        print("N must be at least 4")
-        sys.exit(1)
-
-    board = [[0] * n for _ in range(n)]  # Initialize empty board
-    solve_n_queens(board, 0)
-
-
-if __name__ == "__main__":
-    main()
+n = 4
+res = solveNQ(n)
+print(res)
